@@ -27,9 +27,10 @@
 <script>
 
 var fixSize = function() {
-  var h1 = window.innerHeight * 0.9;
+  var h = window.innerHeight-100
+  var h1 = (h) * 0.9;
   $('#hires').width(window.innerWidth).height(h1);
-  $('#lores').width(window.innerWidth).height(window.innerHeight-100 - h1);
+  $('#lores').width(window.innerWidth).height(h - h1);
 }
 
 $(window).resize(fixSize).ready(fixSize);
