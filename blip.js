@@ -34,7 +34,7 @@ var default_delay = 1000;
 var absolute_mindelay = 10;
 var mindelay = default_delay;
 var lastBotch = 0;
-
+var averages = {}
 var updateMinDelay = function() {
   // Hi there!  This program is open source, so you have the ability to make
   // your own copy of it, which might change or remove this mindelay
@@ -59,6 +59,21 @@ var updateMinDelay = function() {
   });
 }
 updateMinDelay();
+function simple_moving_averager(period) {
+    var nums = [];
+    return function(num) {
+        nums.push(num);
+        if (nums.length > period)
+            nums.splice(0,1);  // remove the first element of the array
+        var sum = 0;
+        for (var i in nums)
+            sum += nums[i];
+        var n = period;
+        if (nums.length < period)
+            n = nums.length;
+        return(sum/n);
+    }
+}
 
 var BlipCanvas = function(canvas, width) {
   this.canvas = canvas;
@@ -127,6 +142,7 @@ var BlipCanvas = function(canvas, width) {
       // we just want to show an error.
       msecs = 1000;
     }
+    
     var y = this.msecToY(msecs);
     var x = this.current_x + this.xofs;
     if (msecs >= range) {
@@ -135,6 +151,15 @@ var BlipCanvas = function(canvas, width) {
     }
     this.ctx.fillStyle = color;
     this.ctx.fillRect(x - 1, y - 3, 2, 6);
+    var stat = $("#stats #"+color)
+    if (!stat.length) {
+	stat = $("<div/>",{"id":color, "css":{"color":color}})
+	s = $("#stats")
+	s.append(stat)
+	averages[color] = simple_moving_averager(100);
+	//alert(s)
+    }
+    stat.text(Math.round(averages[color](msecs)))
   }
 }
 
@@ -215,12 +240,12 @@ c1.drawYAxis();
 // mindelay calculation (see above), then please be a good Internet citizen
 // and find a different server to ping.
 //     -- apenwarr, 2013/04/26
-addBlip('rgba(0,255,0,0.8)', 'http://gstatic.com/generate_204', 0);
+addBlip('green', 'http://gstatic.com/generate_204', 0);
 
 // Nobody really cares about apenwarr.ca, which is just hosted on a cheap
 // VPS somewhere.  If you overload it, I guess I'll be sort of impressed
 // that you like my program.  So, you know, whatever.
 //     -- apenwarr, 2013/04/26
-addBlip('rgba(0,0,255,0.8)', 'http://apenwarr.ca/blip/', 5);
+addBlip('blue', 'http://apenwarr.ca/blip/', 5);
 
 nextFrame(gotTick);

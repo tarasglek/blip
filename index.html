@@ -18,6 +18,8 @@
   </style>
 </head>
 <body>
+<div id='stats'>
+</div>
 <canvas class='blipchart' id='hires'></canvas>
 <canvas class='blipchart' id='lores'></canvas>
 <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js'></script>
@@ -27,7 +29,7 @@
 var fixSize = function() {
   var h1 = window.innerHeight * 0.9;
   $('#hires').width(window.innerWidth).height(h1);
-  $('#lores').width(window.innerWidth).height(window.innerHeight - h1);
+  $('#lores').width(window.innerWidth).height(window.innerHeight-100 - h1);
 }
 
 $(window).resize(fixSize).ready(fixSize);
