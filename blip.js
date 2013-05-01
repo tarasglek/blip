@@ -35,6 +35,7 @@ var absolute_mindelay = 10;
 var mindelay = default_delay;
 var lastBotch = 0;
 var averages = {}
+var isDrawing = true;
 var updateMinDelay = function() {
   // Hi there!  This program is open source, so you have the ability to make
   // your own copy of it, which might change or remove this mindelay
@@ -99,6 +100,7 @@ var BlipCanvas = function(canvas, width) {
   }
 
   this.nextX = function(msecs) {
+    if (!isDrawing) return
     var steps = msecs / absolute_mindelay;
     if (steps > 100) {
       steps = 100;
@@ -142,15 +144,16 @@ var BlipCanvas = function(canvas, width) {
       // we just want to show an error.
       msecs = 1000;
     }
-    
-    var y = this.msecToY(msecs);
-    var x = this.current_x + this.xofs;
-    if (msecs >= range) {
-      this.ctx.fillStyle = '#f00';
-      this.ctx.fillRect(x - 2, y - 1, 3, 4);
+    if (isDrawing) {
+	var y = this.msecToY(msecs);
+	var x = this.current_x + this.xofs;
+	if (msecs >= range) {
+	    this.ctx.fillStyle = '#f00';
+	    this.ctx.fillRect(x - 2, y - 1, 3, 4);
+	}
+	this.ctx.fillStyle = color;
+	this.ctx.fillRect(x - 1, y - 3, 2, 6);
     }
-    this.ctx.fillStyle = color;
-    this.ctx.fillRect(x - 1, y - 3, 2, 6);
     var stat = $("#stats #"+color)
     if (!stat.length) {
 	stat = $("<div/>",{"id":color, "css":{"color":color}})
